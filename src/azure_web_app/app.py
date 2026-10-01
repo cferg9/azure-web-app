@@ -15,15 +15,16 @@ def create_app():
 
 
 def index():
-    return render_template("index.html", 
-        name="CFERG", 
-        hobby="Soccer", 
+    current_hour = datetime.now().hour
+    return render_template(
+        "index.html",
+        name="CFERG",
+        hobby="Soccer",
         hours_per_week="3",
-        hour=datetime.now().hour,
+        hour=current_hour,
         show_counter=True,
         fun_fact="I have played soccer for 14 years",
         favorites=FAVORITES,
-        
     )
 
 
