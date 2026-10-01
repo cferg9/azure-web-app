@@ -19,7 +19,7 @@
       <!-- Simple jinja templating. In your render_html, you can do variable substitution here. -->
       <h1>Hello {{ name }}!</h1>
       <p>{{ hobby | upper }}</p>
-      <p>That's about {{ hours_per_week * 52 / 24 | round(1) }} days a year.</p>
+      <p>That's about {{ (hours_per_week * 52 / 24 )| round(1) }} days a year.</p>
       <p>Fun fact: {{ fun_fact | default("No fun fact yet!") }}</p>
       {% if hour < 12 %}
         <p>Good morning!</p>
