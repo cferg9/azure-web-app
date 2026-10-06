@@ -65,9 +65,9 @@ def favorite_detail(favorite_id: int):
         if favorite["id"] == favorite_id:
             return render_template("favorites.html", favorite=favorite)
     abort(404)
-    
+
 def players():
-    return render_template("players.html", favorites=PLAYERS)
+    return render_template("players.html", players=PLAYERS)
 
 def setup_routes(app):
     app.route("/")(index)
