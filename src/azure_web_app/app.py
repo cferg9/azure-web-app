@@ -15,12 +15,12 @@ def create_app():
 
 
 def index():
-    current_hour = datetime.now().hour
+    current_hour = datetime.now().hour  # noqa: DTZ005
     return render_template(
         "index.html",
         name="CFERG",
         hobby="Soccer",
-        hours_per_week="3",
+        hours_per_week=3,
         hour=current_hour,
         show_counter=True,
         fun_fact="I have played soccer for 14 years",
