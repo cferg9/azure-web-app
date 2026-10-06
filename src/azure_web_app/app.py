@@ -59,7 +59,6 @@ def index():
         fun_fact="I have played soccer for 14 years",
         favorites=FAVORITES,
     )
-    return render_template("players.html", players=PLAYERS)
 
 def favorite_detail(favorite_id: int):
     for favorite in FAVORITES:
@@ -67,7 +66,7 @@ def favorite_detail(favorite_id: int):
             return render_template("favorites.html", favorite=favorite)
     abort(404)
 def players():
-    return render_template("players.html", favorites=FAVORITES)
+    return render_template("players.html", favorites=PLAYERS)
 
 def setup_routes(app):
     app.route("/")(index)
