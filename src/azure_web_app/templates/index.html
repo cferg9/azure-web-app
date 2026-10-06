@@ -1,76 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <!-- Set the charset -->
-    <meta charset="utf-8" />
-    <!-- Metadata to tell the browser that this document is reponsive -->
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Hello</title>
-    <!-- Include boostrap 5, copied from their website:  https://getbootstrap.com/docs/5.3/getting-started/introduction/-->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-      crossorigin="anonymous"
-    />
-  </head>
-  <body>
-    <main>
-      <!-- Simple jinja templating. In your render_html, you can do variable substitution here. -->
-      <h1>Hello {{ name }}!</h1>
-      <p>{{ hobby | upper }}</p>
-      <p>That's about {{ (hours_per_week * 52 / 24 )| round(1) }} days a year.</p>
-      <p>Fun fact: {{ fun_fact | default("No fun fact yet!") }}</p>
-      {% if hour < 12 %}
-        <p>Good morning!</p>
-      {% elif hour < 18 %}
-        <p>Good afternoon!</p>
-      {% else %}
-        <p>Good evening!</p>
-      {% endif %}
-      <!-- Javascript demonstration -->
-      {% if show_counter %}
-      <div>
-        <p>Click the button to increment the counter:</p>
-        <!-- The btn and btn-primary classes are from bootstrap -->
-        <button id="incrementButton" class="btn btn-primary">
-          Increment Counter
-        </button>
-        <p>Counter: <span id="counter">0</span></p>
-      </div>
-      {% endif %}
-    </main>
+{% extends "base.html" %}
 
-    <!-- Include the javascript necessary for bootstrap to run. 
-     Generally speaking, we include the javascript last, outside of head. This makes the web page
-     load faster the first time, as it doesn't have to download the javascript -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-      crossorigin="anonymous"
-    ></script>
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <h1>Hello {{ name }}!</h1>
+
+    <p>{{ hobby | upper }}</p>
+
+    <p>That's about {{ hours_per_week * 52 / 24 | round(1) }} days a year.</p>
+
+    <p>Fun fact: {{ fun_fact | default("No fun fact yet!") }}</p>
+
+    {% if hour < 12 %}
+        <p>Good morning!</p>
+    {% elif hour < 18 %}
+        <p>Good afternoon!</p>
+    {% else %}
+        <p>Good evening!</p>
+    {% endif %}
 
     {% if show_counter %}
-    <script src="{{ url_for('static', filename='js/button.js') }}"></script>
+        <div>
+            <p>Click the button to increment the counter:</p>
+            <button id="incrementButton" class="btn btn-primary">
+                Increment Counter
+            </button>
+            <p>Counter: <span id="counter">0</span></p>
+        </div>
     {% endif %}
 
     <h2>My Favorites ({{ favorites | length }})</h2>
 
-<div class="row g-3">
-    {% for favorite in favorites %}
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        {{ loop.index }}. {{ favorite.title }}
-                    </h5>
-                    <p class="card-text">{{ favorite.why }}</p>
+    <div class="row g-3">
+        {% for favorite in favorites %}
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            {{ loop.index }}. {{ favorite.title }}
+                        </h5>
+                        <p class="card-text">{{ favorite.why }}</p>
+                        <a class="btn btn-primary"
+                        href="{{ url_for('favorite_detail', favorite_id=favorite.id) }}">Read more</a>
+                    </div>
                 </div>
             </div>
-        </div>
-    {% else %}
-        <p>No favorites yet!</p>
-    {% endfor %}
-</div>
-  </body>
-</html>
+        {% else %}
+            <p>No favorites yet!</p>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {% if show_counter %}
+        <script src="{{ url_for('static', filename='js/button.js') }}"></script>
+    {% endif %}
+{% endblock %}

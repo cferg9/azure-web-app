@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import Flask, render_template
+from flask import Flask, abort, render_template
 
 FAVORITES = [
     {"id": 1, "title": "Lionel Messi", "why": "His dribbling and playmaking."},
@@ -27,10 +27,15 @@ def index():
         favorites=FAVORITES,
     )
 
+def favorite_detail(favorite_id: int):
+    for favorite in FAVORITES:
+        if favorite["id"] == favorite_id:
+            return render_template("favorite.html", favorite=favorite)
+    abort(404)
 
 def setup_routes(app):
     app.route("/")(index)
-
+    app.route("/favorites/<int:favorite_id>")(favorite_detail)
 
 def run_app(debug: bool = True) -> None:
     app = create_app()

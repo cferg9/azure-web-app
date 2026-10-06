@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}{{ favorite.title }}{% endblock %}
+
+{% block content %}
+  <h1>{{ favorite.title }}</h1>
+  <p class="lead">{{ favorite.why }}</p>
+  <a class="btn btn-secondary" href="{{ url_for('index') }}">Back to all favorites</a>
+{% endblock %}
