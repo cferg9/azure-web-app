@@ -2,6 +2,39 @@ from datetime import datetime
 
 from flask import Flask, abort, render_template
 
+PLAYERS = [
+    {
+        "name": "Lionel Messi",
+        "team": "Inter Miami",
+        "goals": 800,
+        "favorite": True
+    },
+    {
+        "name": "Cristiano Ronaldo",
+        "team": "Al Nassr",
+        "goals": 900,
+        "favorite": True
+    },
+    {
+        "name": "Neymar",
+        "team": "Santos",
+        "goals": 400,
+        "favorite": True
+    },
+    {
+        "name": "Kylian Mbappe",
+        "team": "Real Madrid",
+        "goals": 300,
+        "favorite": False
+    },
+    {
+        "name": "Kevin De Bruyne",
+        "team": "Napoli",
+        "goals": 150,
+        "favorite": False
+    }
+]
+
 FAVORITES = [
     {"id": 1, "title": "Lionel Messi", "why": "His dribbling and playmaking."},
     {"id": 2, "title": "Cristiano Ronaldo", "why": "His goal-scoring ability."},
@@ -26,6 +59,7 @@ def index():
         fun_fact="I have played soccer for 14 years",
         favorites=FAVORITES,
     )
+    return render_template("players.html", players=PLAYERS)
 
 def favorite_detail(favorite_id: int):
     for favorite in FAVORITES:
@@ -36,6 +70,7 @@ def favorite_detail(favorite_id: int):
 def setup_routes(app):
     app.route("/")(index)
     app.route("/favorites/<int:favorite_id>")(favorite_detail)
+    app.route("/")(index)
 
 def run_app(debug: bool = True) -> None:
     app = create_app()

@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}My Favorite Soccer Players{% endblock %}
+
+{% block content %}
+
+<div class="alert alert-primary" role="alert">
+    These are some of my favorite soccer players!
+</div>
+
+<h1>My Favorite Soccer Players</h1>
+
+<p class="lead">
+    I have played soccer for many years, so these are some of the players I enjoy watching.
+</p>
+
+<div class="list-group mb-4">
+    {% for player in players %}
+        <div class="list-group-item">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-1">{{ loop.index }}. {{ player.name | upper }}</h5>
+                    <p class="mb-1">Team: {{ player.team }}</p>
+                </div>
+
+                {% if player.favorite %}
+                    <span class="badge text-bg-success">Favorite</span>
+                {% else %}
+                    <span class="badge text-bg-secondary">Great Player</span>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="row g-4">
+
+    {% for player in players %}
+        <div class="col-12 col-md-6 col-lg-4">
+
+            <div class="card h-100">
+
+                <div class="card-body">
+
+                    <h5 class="card-title">
+                        {{ player.name }}
+                    </h5>
+
+                    <h6 class="card-subtitle mb-2 text-body-secondary">
+                        {{ player.team }}
+                    </h6>
+
+                    <p class="card-text">
+                        {{ player.name }} has scored approximately
+                        {{ player.goals }} career goals.
+                    </p>
+
+                    {% if player.goals >= 800 %}
+                        <span class="badge text-bg-warning">
+                            800+ Career Goals
+                        </span>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+    {% endfor %}
+
+</div>
+
+<div class="accordion mt-4" id="soccerAccordion">
+
+    <div class="accordion-item">
+
+        <h2 class="accordion-header">
+            <button
+                class="accordion-button"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseOne">
+                Why I Like Soccer
+            </button>
+        </h2>
+
+        <div
+            id="collapseOne"
+            class="accordion-collapse collapse show"
+            data-bs-parent="#soccerAccordion">
+
+            <div class="accordion-body">
+                Soccer is one of my favorite sports because I enjoy
+                watching the skill, teamwork, and creativity of the players.
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
