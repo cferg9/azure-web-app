@@ -64,13 +64,15 @@ def index():
 def favorite_detail(favorite_id: int):
     for favorite in FAVORITES:
         if favorite["id"] == favorite_id:
-            return render_template("favorite.html", favorite=favorite)
+            return render_template("favorites.html", favorite=favorite)
     abort(404)
+def players():
+    return render_template("players.html", favorites=FAVORITES)
 
 def setup_routes(app):
     app.route("/")(index)
     app.route("/favorites/<int:favorite_id>")(favorite_detail)
-    app.route("/")(index)
+    app.route("/players")(players)
 
 def run_app(debug: bool = True) -> None:
     app = create_app()
