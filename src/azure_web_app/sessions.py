@@ -71,7 +71,7 @@ def set_session_cookie(response: Response, session_id: str) -> None:
         # when the user clicks a plain link to our site.
         samesite="Lax",
         # Only send the cookie over HTTPS. Azure uses HTTPS; your laptop doesn't.
-        secure=True(),
+        secure=True,
     )
 
 
