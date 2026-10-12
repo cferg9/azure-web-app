@@ -10,4 +10,10 @@
     <li class="list-group-item">Session ID: <code>{{ current_user.sessionid }}</code></li>
     <li class="list-group-item">Session expires: {{ current_user.expiry }} (UTC)</li>
   </ul>
+   <button
+      type="button"
+      id="logoutEverywhereButton"
+      class="btn btn-danger">
+    Log out everywhere
+  </button>
 {% endblock %}

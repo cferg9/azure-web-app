@@ -82,10 +82,16 @@ def setup_routes(app):
     app.route("/favorites/<int:favorite_id>")(favorite_detail)
     app.route("/players")(players)
     app.route("/account")(account)
+    app.route("/dashboard")(dashboard)
 
 @login_required
 def account():
     return render_template("account.html")
+
+@login_required
+def dashboard():
+    """Display a page available only to logged-in users."""
+    return render_template("dashboard.html")
 
 def run_app(debug: bool = True) -> None:
     app = create_app()
