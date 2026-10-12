@@ -161,8 +161,8 @@ async function submitLoginForm(event) {
     alert(reply.result.message);
 
     if (reply.response.ok) {
-		window.location.reload();
-	}
+    window.location.href = "/account";
+}
 }
 // Runs when the logout button is clicked.
 async function logout() {
@@ -174,6 +174,20 @@ async function logout() {
 	// Go back to the home page. This loads a fresh page, so the navbar is
 	// rendered again without the session cookie.
 	window.location.href = "/";
+}
+async function logoutEverywhere() {
+    const reply = await postJson("/logout-everywhere", {});
+
+    if (reply === null || !reply.response.ok) {
+        alert(
+            reply?.result?.message ||
+            "Could not log out everywhere. Please try again."
+        );
+        return;
+    }
+
+    alert("You have been logged out everywhere.");
+    window.location.href = "/";
 }
 
 // Remove the green/red validation styling from an input once the user starts
@@ -201,12 +215,19 @@ function resetModalForms(event) {
 
 // Connect our functions to the elements on the page.
 function attachEventListeners() {
-	// ?. means "only call addEventListener if the element exists". Every page
-	// includes this script, but a page might not have every form on it.
-	
-	document.getElementById("logoutButton")?.addEventListener("click", logout);
-	document.getElementById("registerForm")?.addEventListener("submit", submitRegisterForm);
-	document.getElementById("loginForm")?.addEventListener("submit", submitLoginForm);
+    // Only trigger logout-everywhere when its button is clicked.
+    document.getElementById("logoutEverywhereButton")
+        ?.addEventListener("click", logoutEverywhere);
+
+    document.getElementById("logoutButton")
+        ?.addEventListener("click", logout);
+
+    document.getElementById("registerForm")
+        ?.addEventListener("submit", submitRegisterForm);
+
+    document.getElementById("loginForm")
+        ?.addEventListener("submit", submitLoginForm);
+}
 
 	for (const input of document.querySelectorAll("input")) {
 		input.addEventListener("input", clearValidation);
@@ -216,7 +237,7 @@ function attachEventListeners() {
 	for (const modal of document.querySelectorAll(".modal")) {
 		modal.addEventListener("hidden.bs.modal", resetModalForms);
 	}
-}
+
 
 // Run attachEventListeners once the page's HTML has loaded. If it has already
 // loaded by the time this script runs, run it right away. Otherwise, wait for

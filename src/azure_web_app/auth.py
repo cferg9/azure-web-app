@@ -8,7 +8,7 @@ Notice that there's no SQL in this file. Endpoints decide what should happen;
 the Database class in db.py does the talking to the database.
 """
 
-from flask import Flask, request
+from flask import Flask, g, request
 from flask_bcrypt import check_password_hash, generate_password_hash
 from flask_restful import Api, Resource
 from flask import make_response
@@ -131,10 +131,15 @@ class Login(Resource):
 
         db.update_last_login(username)
 
-        return {"message": message}, 200
-
         session_id = db.create_session(user.userid)
-        response = make_response({"message": message, "displayName": user.display_name}, 200)
+
+        response = make_response(
+        {
+        "message": message,
+        "displayName": user.display_name
+        },
+        200
+    )
         set_session_cookie(response, session_id)
         return response
 
@@ -147,6 +152,7 @@ def setup_auth(app: Flask) -> None:
     api.add_resource(Register, "/register")
     api.add_resource(Login, "/login")
     api.add_resource(Logout, "/logout")
+    api.add_resource(LogoutEverywhere, "/logout-everywhere")
 
 class Logout(Resource):
     def post(self):
@@ -159,5 +165,30 @@ class Logout(Resource):
         # Clear the cookie even if the session was already gone, so the browser
         # stops sending a cookie that doesn't work anymore.
         response = make_response({"message": "Logged out"}, 200)
+        clear_session_cookie(response)
+        return response
+
+class LogoutEverywhere(Resource):
+    """Log out the current user from all devices."""
+
+    def post(self):
+        user = g.get("current_user")
+
+        # The current request must belong to a valid logged-in user.
+        if user is None:
+            response = make_response(
+                {"message": "You must be logged in."},
+                401,
+            )
+            clear_session_cookie(response)
+            return response
+
+        # Delete every session belonging to this user.
+        get_db().delete_all_sessions(user.userid)
+
+        response = make_response(
+            {"message": "Logged out everywhere."},
+            200,
+        )
         clear_session_cookie(response)
         return response

@@ -93,7 +93,7 @@ class Database:
         """Return login information for a username, or None if the user does not exist."""
         cursor = self.connection.cursor()
         cursor.execute(
-            "SELECT password, display_name, last_login FROM Users WHERE username = ?",
+            "SELECT userid, password, display_name, last_login FROM Users WHERE username = ?",
             (username,),
     )
         result = cursor.fetchone()
@@ -108,27 +108,36 @@ class Database:
             (username,),
         )
         self.connection.commit()
-        def create_session(self, user_id: int) -> str:
+    def create_session(self, user_id: int) -> str:
        
-            with self.connection.cursor() as cursor:
-                cursor.execute(
-                """
-                INSERT INTO Sessions (userid, expiry)
-                OUTPUT INSERTED.sessionid
-                VALUES (?, DATEADD(SECOND, ?, GETDATE()))
-                """,
-                (user_id, SESSION_LIFETIME_SECONDS),
+        with self.connection.cursor() as cursor:
+            cursor.execute(
+            """
+            INSERT INTO Sessions (userid, expiry)
+            OUTPUT INSERTED.sessionid
+            VALUES (?, DATEADD(SECOND, ?, GETDATE()))
+            """,
+            (user_id, SESSION_LIFETIME_SECONDS),
             )
             # mssql-python gives us UNIQUEIDENTIFIER values as Python uuid.UUID
             # objects, so we convert to a string before it goes in a cookie.
-                session_id = str(cursor.fetchone()[0])
-            self.connection.commit()
-            return session_id
+            session_id = str(cursor.fetchone()[0])
+        self.connection.commit()
+        return session_id
 
     def delete_session(self, session_id: str) -> None:
         """Remove a session from the Sessions table."""
         with self.connection.cursor() as cursor:
             cursor.execute("DELETE FROM Sessions WHERE sessionid = ?", (session_id,))
+        self.connection.commit()
+        
+    def delete_all_sessions(self, user_id: int) -> None:
+        """Delete all sessions belonging to a user."""
+        with self.connection.cursor() as cursor:
+            cursor.execute(
+            "DELETE FROM Sessions WHERE userid = ?",
+            (user_id,),
+        )
         self.connection.commit()
 
     def get_session_user(self, session_id: str):

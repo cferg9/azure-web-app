@@ -1,0 +1,16 @@
+
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+  <h1>Dashboard</h1>
+
+  <p class="lead">
+    Welcome, {{ current_user.display_name }}!
+  </p>
+
+  <p>
+    This is a private page that only logged-in users can access.
+  </p>
+{% endblock %}
