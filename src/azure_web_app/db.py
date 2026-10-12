@@ -14,7 +14,7 @@ import os
 import mssql_python
 from flask import Flask, g
 
-from ._constants import CONNECTION_STRING_VARIABLE
+from ._constants import CONNECTION_STRING_VARIABLE, SESSION_LIFETIME_SECONDS
 
 
 def get_connection_string() -> str:
@@ -108,6 +108,43 @@ class Database:
             (username,),
         )
         self.connection.commit()
+        def create_session(self, user_id: int) -> str:
+       
+            with self.connection.cursor() as cursor:
+                cursor.execute(
+                """
+                INSERT INTO Sessions (userid, expiry)
+                OUTPUT INSERTED.sessionid
+                VALUES (?, DATEADD(SECOND, ?, GETDATE()))
+                """,
+                (user_id, SESSION_LIFETIME_SECONDS),
+            )
+            # mssql-python gives us UNIQUEIDENTIFIER values as Python uuid.UUID
+            # objects, so we convert to a string before it goes in a cookie.
+                session_id = str(cursor.fetchone()[0])
+            self.connection.commit()
+            return session_id
+
+    def delete_session(self, session_id: str) -> None:
+        """Remove a session from the Sessions table."""
+        with self.connection.cursor() as cursor:
+            cursor.execute("DELETE FROM Sessions WHERE sessionid = ?", (session_id,))
+        self.connection.commit()
+
+    def get_session_user(self, session_id: str):
+        """Return the logged-in user's info for a session, or None if the session doesn't exist."""
+        with self.connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT Users.userid, Users.username, Users.display_name, Users.last_login,
+                       Sessions.sessionid, Sessions.expiry
+                FROM Sessions
+                JOIN Users ON Users.userid = Sessions.userid
+                WHERE Sessions.sessionid = ?
+                """,
+                (session_id,),
+            )
+            return cursor.fetchone()
 
 def get_db() -> Database:
     """Return this request's Database, connecting on first use."""

@@ -2,8 +2,9 @@ from datetime import datetime
 
 from dotenv import find_dotenv, load_dotenv
 from flask import Flask, abort, render_template
+from azure_web_app.sessions import login_required
 
-from azure_web_app import auth, db
+from azure_web_app import auth, db, sessions
 from azure_web_app._constants import SECRET_ENV_FILE
 
 PLAYERS = [
@@ -50,6 +51,7 @@ def create_app():
     app = Flask(__name__)
     db.setup_for_app(app)
     auth.setup_auth(app)
+    sessions.setup_sessions(app)
     setup_routes(app)
     return app
 
@@ -79,6 +81,11 @@ def setup_routes(app):
     app.route("/")(index)
     app.route("/favorites/<int:favorite_id>")(favorite_detail)
     app.route("/players")(players)
+    app.route("/account")(account)
+
+@login_required
+def account():
+    return render_template("account.html")
 
 def run_app(debug: bool = True) -> None:
     app = create_app()

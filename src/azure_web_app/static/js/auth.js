@@ -161,8 +161,19 @@ async function submitLoginForm(event) {
     alert(reply.result.message);
 
     if (reply.response.ok) {
-        hideModal("loginModal");
-    }
+		window.location.reload();
+	}
+}
+// Runs when the logout button is clicked.
+async function logout() {
+	const reply = await postJson("/logout", {});
+	if (reply === null || !reply.response.ok) {
+		alert("Logout failed. Please try again.");
+		return;
+	}
+	// Go back to the home page. This loads a fresh page, so the navbar is
+	// rendered again without the session cookie.
+	window.location.href = "/";
 }
 
 // Remove the green/red validation styling from an input once the user starts
@@ -193,7 +204,7 @@ function attachEventListeners() {
 	// ?. means "only call addEventListener if the element exists". Every page
 	// includes this script, but a page might not have every form on it.
 	
-
+	document.getElementById("logoutButton")?.addEventListener("click", logout);
 	document.getElementById("registerForm")?.addEventListener("submit", submitRegisterForm);
 	document.getElementById("loginForm")?.addEventListener("submit", submitLoginForm);
 
